@@ -8,7 +8,6 @@
 #ifndef UART1_H_
 #define UART1_H_
 
-#include "uart.h"
 #include <stdint.h>
 
 void init_uart1(uint32_t baud);

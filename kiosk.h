@@ -8,16 +8,16 @@
 #ifndef KIOSK_H_
 #define KIOSK_H_
 
-#include "Console.h"
-#include "uart1.h"
-#include <stdio.h>
-#include <string.h>
+#include <stdint.h>
 
 #define init_kiosk init_uart1
+// indicate that the kiosk is connected to the uart1
+#define KIOSK_GETCHAR uart1_getchar
+#define KIOSK_PUTCHAR uart1_putchar
 
 void proc_kiosk();
-int get_packet_from_kiosk(char *buf);
-int proc_command_on_kiosk(char *cmd, uint8_t len);
-static int send_to_kiosk(char *buf);
+static int get_packet_from_kiosk(char *buf);
+static int proc_command_on_kiosk(char *cmd, uint8_t len);
+int send_to_kiosk(char *buf);
 
 #endif /* KIOSK_H_ */

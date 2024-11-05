@@ -7,11 +7,9 @@
 
 #ifndef CONSOLE_H_
 #define CONSOLE_H_
+#define INVALID_CMD -1
 
-#include "uart.h"
 #include <stdint.h>
-#include <stdio.h>
-#include <string.h>
 
 void init_cons(uint32_t baud);
 int get_packet_from_cons(char *buf);

@@ -5,6 +5,8 @@
  *  Author: FHT
  */
 #include "uart1.h"
+#include "uart.h"
+#include "util.h"
 #include <avr/interrupt.h>
 #include <avr/io.h>
 #include <avr/sfr_defs.h>
@@ -31,7 +33,6 @@ void init_uart1(uint32_t baud)
 
 /*
  * @brief: get char from rx buffer
- * @return: 0: 실패, 1: 성공
  * */
 int uart1_getchar(char *c)
 {
@@ -43,11 +44,11 @@ int uart1_getchar(char *c)
     --rx_len;
 
     sbi(UCSR1B, RXCIE1);
-    return 1;
+    return SUCCESS;
   }
 
   sbi(UCSR1B, RXCIE1);
-  return 0;
+  return -1;
 }
 
 /*
@@ -64,11 +65,11 @@ int uart1_putchar(char c)
     ++tx_len;
 
     sbi(UCSR1B, UDRIE1);
-    return 1; // success
+    return SUCCESS;
   }
 
   sbi(UCSR1B, UDRIE1);
-  return 0; // fail
+  return -1;
 }
 
 ISR(USART1_UDRE_vect)

@@ -5,10 +5,13 @@
  *  Author: FHT
  */
 #include "kiosk.h"
-
-// indicate that the kiosk is connected to the uart1
-#define KIOSK_GETCHAR uart1_getchar
-#define KIOSK_PUTCHAR uart1_putchar
+#include "Console.h"
+#include "uart.h"
+#include "uart1.h"
+#include "us.h"
+#include "util.h"
+#include <stdio.h>
+#include <string.h>
 
 static uint8_t tx_len = 0;
 static char tx_buf[UART_BUFF_SIZE];
@@ -34,11 +37,11 @@ void proc_kiosk()
  * @param buf 처리할 문자열을 담을 버퍼
  * @return 처리한 문자열의 길이
  */
-int get_packet_from_kiosk(char *buf)
+static int get_packet_from_kiosk(char *buf)
 {
   char c;
 
-  if (KIOSK_GETCHAR(&c)) {
+  if (KIOSK_GETCHAR(&c) == SUCCESS) {
     // separate the packet into the commands by '\r'
     if (c == CHAR_CR) {
       int len = rx_len;
@@ -50,13 +53,13 @@ int get_packet_from_kiosk(char *buf)
       rx_buff[rx_len] = c;
     }
 
-    return 0;
+    return SUCCESS;
   }
 
   return -1;
 }
 
-int proc_command_on_kiosk(char *cmd, uint8_t len)
+static int proc_command_on_kiosk(char *cmd, uint8_t len)
 {
   if ((len <= 0) || (cmd == NULL)) {
     fprintf(stderr, "invalid command on kiosk\n");
@@ -65,19 +68,21 @@ int proc_command_on_kiosk(char *cmd, uint8_t len)
 
   printf("command on kiosk: %s\n", cmd);
 
-  if (strcmp(cmd, "ID?") == 0) {
+  if (strcmp(cmd, "ID?") == SUCCESS) {
     send_to_kiosk("RC v1.0");
+  } else if (strcmp(cmd, "SV1") == SUCCESS) {
+    sv_send_mode = 1;
+  } else if (strcmp(cmd, "SV0") == SUCCESS) {
+    sv_send_mode = 0;
   }
 
-  return 0;
+  return SUCCESS;
 }
 
-static int send_to_kiosk(char *buf)
+int send_to_kiosk(char *buf)
 {
   int len = strlen(buf);
-  int i;
-
-  for (i = 0; i < len; ++i) {
+  for (int i = 0; i < len; ++i) {
     KIOSK_PUTCHAR(buf[i]);
   }
 

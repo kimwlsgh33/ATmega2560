@@ -10,7 +10,12 @@
 #include "Console.h"
 #include "gpio.h"
 #include "kiosk.h"
+#include "periphs.h"
 #include "relay.h"
+#include "timer.h"
+#include "uart1.h"
+#include "us.h"
+
 #include <stdio.h>
 #include <util/delay.h>
 

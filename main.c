@@ -10,16 +10,25 @@
 #define TEST_CONSOLE 1
 #define TEST_RELAY 1
 #define TEST_KIOSK 1
+#define TEST_TIMER 1
+#define TEST_PERIPHS 1
+
+#define TOGGLE_LED() tbi(PORTB, PB7)
+
+static uint8_t tid_op = 0;
+static uint8_t tid_st = 0;
+
+static int st_send_interval = 10;
 
 int main(void)
 {
   //==================================================
   // initialize
   //==================================================
+  asm("sei");
 
 #if TEST_CONSOLE
   init_cons(115200L);
-  asm("sei");
 #endif
 
 #if TEST_GPIO
@@ -34,10 +43,29 @@ int main(void)
   init_kiosk(115200L);
 #endif
 
+#if TEST_TIMER
+  init_timer();
+  tid_op = alloc_timer();
+  set_timer(tid_op, 0);
+  tid_st = alloc_timer();
+#endif
+
+#if TEST_PERIPHS
+  init_periphs();
+#endif
+
   //==================================================
   // loop
   //==================================================
   while (1) {
+#if TEST_TIMER
+    if (timer_isfired(tid_op)) {
+      set_timer(tid_op, 1000);
+      TOGGLE_LED();
+
+      send_sensor_state();
+    }
+#endif
 #if TEST_CONSOLE
     printf("CONSOLE WORKS!!\n");
 #endif
@@ -51,6 +79,12 @@ int main(void)
 #endif
     proc_kiosk();
 #if TEST_KIOSK
+#endif
+#if TEST_TIMER
+    if (timer_isfired(tid_st)) {
+      set_timer(tid_st, st_send_interval * 1000UL);
+      send_periphs_state();
+    }
 #endif
     _delay_ms(1000);
   }

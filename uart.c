@@ -5,6 +5,9 @@
  *  Author: FHT
  */
 #include "uart.h"
+#include "util.h"
+#include <avr/interrupt.h>
+#include <avr/io.h>
 
 static char tx_buff[UART_BUFF_SIZE];
 static uint8_t tx_len = 0;
@@ -28,7 +31,6 @@ void init_uart(uint32_t baud)
 
 /*
  * @brief: get char from rx buffer
- * @return: 0: 실패, 1: 성공
  * */
 int uart_getchar(char *c)
 {
@@ -40,11 +42,11 @@ int uart_getchar(char *c)
     --rx_len;
 
     sbi(UCSR0B, RXCIE0);
-    return 1;
+    return SUCCESS;
   }
 
   sbi(UCSR0B, RXCIE0);
-  return 0;
+  return -1;
 }
 
 int uart_putchar(char c)
@@ -57,11 +59,11 @@ int uart_putchar(char c)
     ++tx_len;
 
     sbi(UCSR0B, UDRIE0);
-    return 1; // success
+    return 1;
   }
 
   sbi(UCSR0B, UDRIE0);
-  return 0; // fail
+  return SUCCESS;
 }
 
 ISR(USART0_UDRE_vect)

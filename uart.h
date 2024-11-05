@@ -8,18 +8,9 @@
 #ifndef UART_H_
 #define UART_H_
 
-#include "util.h"
-#include <avr/interrupt.h>
-#include <avr/io.h>
 #include <stdint.h>
 
-#ifndef F_CPU
-#define F_CPU 16000000UL
-#endif
-
 #define UART_BUFF_SIZE 128
-#define CHAR_CR '\r'
-#define CHAR_LF '\n'
 
 void init_uart(uint32_t baud);
 int uart_getchar(char *c);

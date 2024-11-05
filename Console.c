@@ -5,6 +5,11 @@
  *  Author: FHT
  */
 #include "Console.h"
+#include "uart.h"
+#include "us.h"
+#include "util.h"
+#include <stdio.h>
+#include <string.h>
 
 #define MAX_CMD_SIZE 128
 
@@ -26,7 +31,7 @@ int std_putchar(char c, FILE *stream)
   while (!STD_PUTCHAR(c))
     ;
 
-  return 0;
+  return SUCCESS;
 }
 
 int std_getchar(FILE *stream) {}
@@ -39,13 +44,12 @@ void init_cons(uint32_t baud)
 
 /*
  * @brief: get char from rx buffer
- * @return: len: 성공, 0: 진행중, -1: 실패
  * */
 int get_packet_from_cons(char *buf)
 {
   char c;
 
-  if (STD_GETCHAR(&c)) {
+  if (STD_GETCHAR(&c) == 0) {
     if (c == CHAR_CR) {
       strcpy(buf, cmd);
       STD_PUTCHAR(CHAR_CR);
@@ -61,7 +65,7 @@ int get_packet_from_cons(char *buf)
         cmd[cmd_len++] = c;
         cmd[cmd_len] = 0;
       }
-      return 0;
+      return SUCCESS;
     }
   }
 
@@ -70,18 +74,20 @@ int get_packet_from_cons(char *buf)
 
 int proc_command_on_cons(char *cmd, uint8_t len)
 {
-  if ((len <= 0) || (cmd == 0)) {
-    fprintf(stderr, "invalid command on console\n");
-    return -1;
-  }
+  if ((len <= 0) || (cmd == 0))
+    return INVALID_CMD;
 
   printf("command on console: %s\n", cmd);
 
   if (strcmp(cmd, "ID?") == 0) {
     printf("RC v1.0");
+  } else if (strcmp(cmd, "SV1") == 0) {
+    sv_send_mode = 1;
+  } else if (strcmp(cmd, "SV0") == 0) {
+    sv_send_mode = 0;
   } else {
-    fprintf(stderr, "unknown command on console\n");
+    printf("unknown command on console\n");
   }
 
-  return 0;
+  return SUCCESS;
 }
