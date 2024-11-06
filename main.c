@@ -18,7 +18,7 @@
 static uint8_t tid_op = 0;
 static uint8_t tid_st = 0;
 
-static int st_send_interval = 10;
+static int st_interval_sec = 10;
 
 int main(void)
 {
@@ -59,8 +59,9 @@ int main(void)
   //==================================================
   while (1) {
 #if TEST_TIMER
+    // NOTE: send sensor state every 500ms
     if (timer_isfired(tid_op)) {
-      set_timer(tid_op, 1000);
+      set_timer(tid_op, 500);
       TOGGLE_LED();
 
       send_sensor_state();
@@ -81,8 +82,9 @@ int main(void)
 #if TEST_KIOSK
 #endif
 #if TEST_TIMER
+    // NOTE: send periphs state every st_send_interval seconds
     if (timer_isfired(tid_st)) {
-      set_timer(tid_st, st_send_interval * 1000UL);
+      set_timer(tid_st, st_interval_sec * 1000UL);
       send_periphs_state();
     }
 #endif

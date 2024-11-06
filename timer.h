@@ -15,6 +15,6 @@
 void init_timer();
 uint8_t alloc_timer();
 int get_timer(uint8_t id);
-int set_timer(uint8_t id, uint16_t value);
+int set_timer(uint8_t id, uint32_t value);
 
 #endif /* TIMER_H_ */

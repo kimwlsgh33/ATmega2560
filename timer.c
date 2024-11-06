@@ -58,7 +58,7 @@ int get_timer(uint8_t id)
   return ERR_INVALID_FLAG;
 }
 
-int set_timer(uint8_t id, uint16_t value)
+int set_timer(uint8_t id, uint32_t value)
 {
   if (id >= TIMER_MAX_SIZE) {
     return ERR_INVALID_ID;

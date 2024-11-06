@@ -15,7 +15,9 @@
 #include "timer.h"
 #include "uart1.h"
 #include "us.h"
+#include "util.h"
 
+#include <avr/io.h>
 #include <stdio.h>
 #include <util/delay.h>
 
